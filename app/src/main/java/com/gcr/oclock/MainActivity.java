@@ -2,20 +2,8 @@ package com.gcr.oclock;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,7 +22,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int REQUEST_CODE_LOCATION = 1;
     private static final String TAG = "qqqq";
 
     private OkHttpClient client;
@@ -44,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        permission();
         client = new OkHttpClient();
 
         Button brightness = (Button) findViewById(R.id.btn_brightness);
@@ -73,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        sendData("first_request");
     }
 
 
@@ -84,10 +71,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
                 /** 웹 서버로 요청을 한다. */
-                RequestBody body = new FormBody.Builder()
-                        .add("parameter", "value")
-                        .add("parameter2", "value")
-                        .build();
+                RequestBody body = new FormBody.Builder().build();
                 Request request = new Request.Builder()
                         .url("http://192.168.4.1/"+data)
                         .post(body)
@@ -109,33 +93,4 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-    void permission(){
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                ActivityCompat.requestPermissions(
-                        this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        REQUEST_CODE_LOCATION);
-            } else {
-                ActivityCompat.requestPermissions(
-                        this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        REQUEST_CODE_LOCATION);
-            }
-        }
-    }
-
-    void connect(){
-        WifiConfiguration wificonfig=new WifiConfiguration();
-        wificonfig.SSID = String.format("\"%s\"", "ESP8266-AP");
-        wificonfig.preSharedKey = String.format("\"%s\"", "123456789");
-
-        WifiManager wifiManager=(WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
-        int netId = wifiManager.addNetwork(wificonfig);
-        wifiManager.disconnect();
-        wifiManager.enableNetwork(netId, true);
-        wifiManager.reconnect();
-    }
 }
