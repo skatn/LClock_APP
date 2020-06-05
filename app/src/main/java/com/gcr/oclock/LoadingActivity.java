@@ -27,17 +27,6 @@ public class LoadingActivity extends AppCompatActivity {
         permission();
     }
 
-    void connect(){
-        WifiConfiguration wificonfig=new WifiConfiguration();
-        wificonfig.SSID = String.format("\"%s\"", "ESP8266-AP");
-        wificonfig.preSharedKey = String.format("\"%s\"", "123456789");
-
-        WifiManager wifiManager=(WifiManager)getApplicationContext().getSystemService(WIFI_SERVICE);
-        int netId = wifiManager.addNetwork(wificonfig);
-        wifiManager.disconnect();
-        wifiManager.enableNetwork(netId, true);
-        wifiManager.reconnect();
-    }
 
     void permission(){
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -68,7 +57,7 @@ public class LoadingActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 2000);
+        }, 1500);
     }
 
     @Override
