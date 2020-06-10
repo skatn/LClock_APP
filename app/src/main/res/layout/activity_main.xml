@@ -1,171 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/cat"
-        android:scaleType="centerInside"
-        android:alpha="0.2"/>
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    android:background="@drawable/round_rectangle">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:background="#2a2a2a">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+        <Button
+            android:id="@+id/connect_clock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#59DDBF"
-            android:gravity="center">
+            android:text="L-Clock 접속"
+            android:textColor="#FFF"
+            android:background="#2a2a2a"/>
 
-            <Button
-                android:id="@+id/connect_clock"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="L-Clock 접속"/>
+        <TextView
+            android:layout_width="3px"
+            android:layout_height="match_parent"
+            android:background="#E1E1E1"
+            android:layout_marginVertical="5dp"/>
 
-            <Button
-                android:id="@+id/auto_connect"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="auto connect"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            android:layout_weight="10">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:paddingHorizontal="25dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:id="@+id/btn_brightness"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:background="@drawable/round_rectangle"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:id="@+id/btn_time_mode"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:background="@drawable/round_rectangle"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:background="@drawable/round_rectangle"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:background="@drawable/round_rectangle"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:paddingHorizontal="25dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:id="@+id/btn_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:background="@drawable/round_rectangle"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:background="@drawable/round_rectangle"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:background="@drawable/round_rectangle"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="2"
-                    android:background="@drawable/round_rectangle"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-        </LinearLayout>
-
+        <Button
+            android:id="@+id/auto_connect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="auto connect"
+            android:textColor="#FFF"
+            android:background="#2a2a2a"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="390dp"
+        android:layout_height="180dp"
+        android:background="#2a2a2a"
+        android:layout_marginTop="10dp"
+        android:paddingVertical="30dp"
+        android:layout_gravity="center_horizontal">
 
-</FrameLayout>
+        <ImageView
+            android:id="@+id/firstSegment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:padding="10dp"
+            android:src="@drawable/seg_0"
+            android:scaleType="centerInside"/>
+        <ImageView
+            android:id="@+id/secondSegment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:padding="10dp"
+            android:src="@drawable/seg_0"
+            android:scaleType="centerInside"/>
+
+        <ImageView
+            android:id="@+id/colonSegment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="35dp"
+            android:src="@drawable/seg_colon"
+            android:scaleType="centerInside"/>
+
+        <ImageView
+            android:id="@+id/thirdSegment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:padding="10dp"
+            android:src="@drawable/seg_0"
+            android:scaleType="centerInside"/>
+        <ImageView
+            android:id="@+id/forthSegment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:padding="10dp"
+            android:src="@drawable/seg_0"
+            android:scaleType="centerInside"/>
+
+
+        <!--TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:text="1"
+            android:fontFamily="@font/dseg7classic_regular"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"/-->
+    </LinearLayout>
+
+    <SeekBar
+        android:id="@+id/bright_bar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginVertical="20dp"
+        android:max="255"
+        android:min="50"
+        android:progress="152"
+        android:progressTint="#2a2a2a"
+        android:thumbTint="#2a2a2a"/>
+
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"/>
+
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        app:ci_drawable="@drawable/black_radius"
+        app:ci_height="7dp"
+        app:ci_width="7dp"
+        app:ci_margin="4dp"/>
+
+
+</LinearLayout>

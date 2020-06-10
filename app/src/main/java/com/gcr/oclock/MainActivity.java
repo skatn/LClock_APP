@@ -2,6 +2,10 @@ package com.gcr.oclock;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,11 +18,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.IOException;
 
 
+import me.relex.circleindicator.CircleIndicator;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -29,8 +36,10 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "qqqq";
-
     private OkHttpClient client;
+
+    FragmentPagerAdapter adapterViewPager;
+    ImageView firstSegment, secondSegment, colonSegment, thirdSegment, forthSegment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +47,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         client = new OkHttpClient();
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapterViewPager);
+
+        CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
+        indicator.setViewPager(viewPager);
+
+        firstSegment = (ImageView) findViewById(R.id.firstSegment);
+        secondSegment = (ImageView) findViewById(R.id.secondSegment);
+        colonSegment = (ImageView) findViewById(R.id.colonSegment);
+        thirdSegment = (ImageView) findViewById(R.id.thirdSegment);
+        forthSegment = (ImageView) findViewById(R.id.forthSegment);
+
 
         Button connectToClock = (Button) findViewById(R.id.connect_clock);
         connectToClock.setOnClickListener(new View.OnClickListener() {
@@ -66,36 +88,66 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button brightness = (Button) findViewById(R.id.btn_brightness);
-        brightness.setOnClickListener(new View.OnClickListener() {
+
+        SeekBar bright_bar = (SeekBar) findViewById(R.id.bright_bar);
+        bright_bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onClick(View v) {
-                final EditText edittext = new EditText(MainActivity.this);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                firstSegment.setAlpha(1-(255-progress)/255.0f);
+                secondSegment.setAlpha(1-(255-progress)/255.0f);
+                colonSegment.setAlpha(1-(255-progress)/255.0f);
+                thirdSegment.setAlpha(1-(255-progress)/255.0f);
+                forthSegment.setAlpha(1-(255-progress)/255.0f);
+            }
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("AlertDialog Title");
-                builder.setMessage("AlertDialog Content");
-                builder.setView(edittext);
-                builder.setPositiveButton("입력",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getApplicationContext(),edittext.getText().toString() ,Toast.LENGTH_LONG).show();
-                                sendData("post", edittext.getText().toString());
-                            }
-                        });
-                builder.setNegativeButton("취소",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-                            }
-                        });
-                builder.show();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
+
 
         sendData("first_request", "");
     }
 
+    public static class MyPagerAdapter extends FragmentPagerAdapter {
+        private static int NUM_ITEMS = 2;
+
+        public MyPagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
+        }
+
+        // Returns total number of pages
+        @Override
+        public int getCount() {
+            return NUM_ITEMS;
+        }
+
+        // Returns the fragment to display for that page
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return FirstFragment.newInstance(0, "Page # 1");
+                case 1:
+                    return SecondFragment.newInstance(1, "Page # 2");
+                default:
+                    return null;
+            }
+        }
+
+        // Returns the page title for the top indicator
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "Page " + position;
+        }
+
+    }
 
     String getWiFiSSID(Context context){
         WifiManager manager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
