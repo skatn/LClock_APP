@@ -1,4 +1,4 @@
-package com.gcr.oclock;
+package com.namsu.lclockapp;
 
 import org.junit.Test;
 

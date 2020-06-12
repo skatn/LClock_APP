@@ -1,4 +1,4 @@
-package com.gcr.oclock;
+package com.namsu.lclockapp;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+
+import com.namsu.lclockapp.R;
 
 public class SecondFragment extends Fragment {
     private String title;

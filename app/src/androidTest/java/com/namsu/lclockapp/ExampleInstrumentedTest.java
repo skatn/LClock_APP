@@ -1,4 +1,4 @@
-package com.gcr.oclock;
+package com.namsu.lclockapp;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.gcr.oclock", appContext.getPackageName());
+        assertEquals("com.namsu.lclockapp", appContext.getPackageName());
     }
 }

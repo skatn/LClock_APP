@@ -1,20 +1,19 @@
-package com.gcr.oclock;
+package com.namsu.lclockapp;
 
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.namsu.lclockapp.R;
 
 public class LoadingActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_LOCATION = 1;

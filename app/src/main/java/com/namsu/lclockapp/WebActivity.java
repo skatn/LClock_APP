@@ -1,4 +1,4 @@
-package com.gcr.oclock;
+package com.namsu.lclockapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.namsu.lclockapp.R;
 
 public class WebActivity extends AppCompatActivity {
 
