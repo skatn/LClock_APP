@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.namsu.lclockapp.MainActivity"
-    android:background="@drawable/round_rectangle">
+    android:background="@drawable/round_rectangle"
+    android:id="@+id/main_layout">
 
     <LinearLayout
         android:layout_width="match_parent"

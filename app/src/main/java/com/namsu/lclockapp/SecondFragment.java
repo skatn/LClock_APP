@@ -4,22 +4,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 
 import androidx.fragment.app.Fragment;
 
 import com.namsu.lclockapp.R;
 
 public class SecondFragment extends Fragment {
-    private String title;
-    private int page;
+    private boolean isAuto = false;
 
     // newInstance constructor for creating fragment with arguments
-    public static SecondFragment newInstance(int page, String title) {
+    public static SecondFragment newInstance() {
         SecondFragment fragment = new SecondFragment();
-       /* Bundle args = new Bundle();
-        args.putInt("someInt", page);
-        args.putString("someTitle", title);
-        fragment.setArguments(args);*/
         return fragment;
     }
 
@@ -27,8 +25,6 @@ public class SecondFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* page = getArguments().getInt("someInt", 0);
-        title = getArguments().getString("someTitle");*/
 
     }
 
@@ -37,8 +33,45 @@ public class SecondFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_second, container, false);
-       /* EditText tvLabel = (EditText) view.findViewById(R.id.editText);
-        tvLabel.setText(page + " -- " + title);*/
+
+        final LinearLayout contain = (LinearLayout) view.findViewById(R.id.container);
+        Switch brightSwitch = (Switch) view.findViewById(R.id.bright_mode);
+        final Switch autoSwitch = (Switch) view.findViewById(R.id.auto_mode);
+
+        if(isAuto) contain.setAlpha(1);
+        else contain.setAlpha(0.2f);
+        brightSwitch.setChecked(isAuto);
+        autoSwitch.setClickable(isAuto);
+
+
+        brightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                isAuto = isChecked;
+
+                if(isChecked){
+                    contain.setAlpha(1);
+                    autoSwitch.setClickable(true);
+                }
+                else{
+                    contain.setAlpha(0.2f);
+                    autoSwitch.setClickable(false);
+                }
+            }
+        });
+
+        autoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+
+                }
+                else{
+
+                }
+            }
+        });
+
         return view;
     }
 }

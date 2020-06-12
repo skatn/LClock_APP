@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private OkHttpClient client;
 
     FragmentPagerAdapter adapterViewPager;
-    ImageView firstSegment, secondSegment, colonSegment, thirdSegment, forthSegment;
+    static ImageView firstSegment, secondSegment, colonSegment, thirdSegment, forthSegment;
+    static boolean isHour24 = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 2;
+        private static int NUM_ITEMS = 3;
 
         public MyPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -132,9 +133,11 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return FirstFragment.newInstance(0, "Page # 1");
+                    return FirstFragment.newInstance();
                 case 1:
-                    return SecondFragment.newInstance(1, "Page # 2");
+                    return SecondFragment.newInstance();
+                case 2:
+                    return ThirdFragment.newInstance();
                 default:
                     return null;
             }
@@ -146,6 +149,21 @@ public class MainActivity extends AppCompatActivity {
             return "Page " + position;
         }
 
+    }
+
+    public static void setTime(int hour, int minute){
+        int[] numbers = {R.drawable.seg_0, R.drawable.seg_1, R.drawable.seg_2, R.drawable.seg_3, R.drawable.seg_4, R.drawable.seg_5 ,R.drawable.seg_6,R.drawable.seg_7, R.drawable.seg_8, R.drawable.seg_9};
+
+        if(!isHour24){
+            if(hour>12)hour -= 12;
+            else if(hour==0)hour = 12;
+        }
+
+        if(hour/10 > 0) firstSegment.setImageResource(numbers[hour/10]);
+        else firstSegment.setImageResource(0);
+        secondSegment.setImageResource(numbers[hour%10]);
+        thirdSegment.setImageResource(numbers[minute/10]);
+        forthSegment.setImageResource(numbers[minute%10]);
     }
 
     String getWiFiSSID(Context context){
