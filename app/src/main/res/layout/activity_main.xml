@@ -21,7 +21,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="L-Clock 접속"
+            android:text="L-Clock 동기화"
             android:textColor="#FFF"
             android:background="#2a2a2a"/>
 
@@ -55,7 +55,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1.5"
             android:padding="10dp"
-            android:src="@drawable/seg_0"
             android:scaleType="centerInside"/>
         <ImageView
             android:id="@+id/secondSegment"

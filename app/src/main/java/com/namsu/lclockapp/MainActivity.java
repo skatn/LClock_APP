@@ -36,6 +36,8 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "qqqq";
     private OkHttpClient client;
+    private String lastParam;
+    private FirstFragment firstFragment;
 
     FragmentPagerAdapter adapterViewPager;
     static ImageView firstSegment, secondSegment, colonSegment, thirdSegment, forthSegment;
@@ -65,12 +67,14 @@ public class MainActivity extends AppCompatActivity {
         connectToClock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkWifi("L-Clock")){
+
+                sendData("sync_request", "");
+                /*if(checkWifi("L-Clock")){
 
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "L-Clock에 연결하여 주십시오.", Toast.LENGTH_SHORT).show();
-                }
+                }*/
             }
         });
 
@@ -110,9 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-        sendData("first_request", "");
     }
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {
@@ -199,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
     private void sendData(String parameter, String data) {
         final String param = parameter;
         final String d = data;
+        lastParam = parameter;
         // 네트워크 통신하는 작업은 무조건 작업스레드를 생성해서 호출 해줄 것!!
         new Thread() {
             public void run() {
@@ -224,7 +226,20 @@ public class MainActivity extends AppCompatActivity {
         public void onResponse(Call call, Response response) throws IOException {
             String body = response.body().string();
             Log.d(TAG, "서버에서 응답한 Body:"+body);
+
+            if(lastParam.equals("sync_request")){
+                parseSyncRequest(body);
+            }
         }
     };
+
+    private void parseSyncRequest(String body){
+        String[] datas = body.split(",");       //rawTime, hour12, useColon, brightMode, brightness
+        int rawTime = Integer.parseInt(datas[0]);
+        int hour12 = Integer.parseInt(datas[1]);
+        int useColon = Integer.parseInt(datas[2]);
+        int brightMode = Integer.parseInt(datas[3]);
+        int brightness = Integer.parseInt(datas[4]);
+    }
 
 }

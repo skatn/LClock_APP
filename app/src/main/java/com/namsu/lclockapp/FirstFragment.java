@@ -28,7 +28,6 @@ public class FirstFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -58,8 +57,8 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        //setHour(5);
-        //setMinute(5);
+        setHour(0);
+        setMinute(0);
         /*
         Button btnOK = (Button) view.findViewById(R.id.btn_ok);
         btnOK.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +71,7 @@ public class FirstFragment extends Fragment {
         return view;
     }
 
-    private void setHour(int hour){
+    public void setHour(int hour){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             timePicker.setHour(hour);
         } else {
@@ -80,7 +79,7 @@ public class FirstFragment extends Fragment {
         }
     }
 
-    private void setMinute(int minute){
+    public void setMinute(int minute){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             timePicker.setMinute(minute);
         } else {
@@ -88,7 +87,7 @@ public class FirstFragment extends Fragment {
         }
     }
 
-    private int getHour(){
+    public int getHour(){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             return timePicker.getHour();
         } else {
@@ -96,7 +95,7 @@ public class FirstFragment extends Fragment {
         }
     }
 
-    private int getMinute(){
+    public int getMinute(){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             return timePicker.getMinute();
         } else {
