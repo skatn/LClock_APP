@@ -13,7 +13,10 @@ import androidx.fragment.app.Fragment;
 import com.namsu.lclockapp.R;
 
 public class SecondFragment extends Fragment {
-    private boolean isAuto = false;
+    private int brightMode = 0;
+    LinearLayout llContainer;
+    Switch brightSwitch, autoSwitch;
+
 
     // newInstance constructor for creating fragment with arguments
     public static SecondFragment newInstance() {
@@ -34,28 +37,25 @@ public class SecondFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_second, container, false);
 
-        final LinearLayout contain = (LinearLayout) view.findViewById(R.id.container);
-        Switch brightSwitch = (Switch) view.findViewById(R.id.bright_mode);
-        final Switch autoSwitch = (Switch) view.findViewById(R.id.auto_mode);
+        llContainer = (LinearLayout) view.findViewById(R.id.container);
+        brightSwitch = (Switch) view.findViewById(R.id.bright_mode);
+        autoSwitch = (Switch) view.findViewById(R.id.auto_mode);
 
-        if(isAuto) contain.setAlpha(1);
-        else contain.setAlpha(0.2f);
-        brightSwitch.setChecked(isAuto);
-        autoSwitch.setClickable(isAuto);
-
+        setSetting();
 
         brightSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isAuto = isChecked;
-
                 if(isChecked){
-                    contain.setAlpha(1);
-                    autoSwitch.setClickable(true);
+                    setMode(autoSwitch.isChecked()? 2 : 1);
+                    //llContainer.setAlpha(1);
+                    //autoSwitch.setClickable(true);
                 }
                 else{
-                    contain.setAlpha(0.2f);
-                    autoSwitch.setClickable(false);
+                    setMode(0);
+                    //brightMode = 0;
+                    //llContainer.setAlpha(0.2f);
+                    //autoSwitch.setClickable(false);
                 }
             }
         });
@@ -64,14 +64,32 @@ public class SecondFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-
+                    setMode(2);
                 }
                 else{
-
+                    setMode(1);
                 }
             }
         });
 
         return view;
+    }
+
+    public void setMode(int mode){
+        brightMode = mode;
+        setSetting();
+        ((MainActivity)getActivity()).sendData("set_bright_mode", String.valueOf(mode));
+    }
+
+    private void setSetting(){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(brightMode!=0) llContainer.setAlpha(1);
+                else llContainer.setAlpha(0.2f);
+                brightSwitch.setChecked(brightMode!=0);
+                autoSwitch.setClickable(brightMode!=0);
+            }
+        });
     }
 }
