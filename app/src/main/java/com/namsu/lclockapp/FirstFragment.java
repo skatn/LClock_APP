@@ -54,7 +54,9 @@ public class FirstFragment extends Fragment {
                     if(isChecked) isHour24 = true;
                     else isHour24 = false;
                     setTime(hour, minutes);
-                    ((MainActivity)getActivity()).sendData("set_hour_mode", isHour24? "0":"1");
+                    if(((MainActivity)getActivity()).checkSync()){
+                        ((MainActivity)getActivity()).sendData("set_hour_mode", isHour24? "0":"1");
+                    }
                 }
             });
 

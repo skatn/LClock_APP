@@ -12,6 +12,8 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -65,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
 
         timer = new Timer();
 
+        firstFragment = FirstFragment.newInstance();
+        secondFragment = SecondFragment.newInstance();
+        thirdFragment = ThirdFragment.newInstance();
+
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(viewPager);
 
@@ -79,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         connectToClock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isSynced = true;
                 sendData("sync_request", "");
                 startTimerTask();
 
@@ -116,8 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 colonSegment.setAlpha(1-(100-progress)/100.0f);
                 thirdSegment.setAlpha(1-(100-progress)/100.0f);
                 forthSegment.setAlpha(1-(100-progress)/100.0f);
-
-                sendData("set_brightness", String.valueOf(progress));
+                brightness = progress;
             }
 
             @Override
@@ -127,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                sendData("set_brightness", String.valueOf(brightness));
             }
         });
         setBrightness(55);
@@ -217,7 +221,9 @@ public class MainActivity extends AppCompatActivity {
                 forthSegment.setImageResource(numbers[modifyMinute%10]);
             }
         });
-        sendData("set_time", String.valueOf(timeOffset));
+        if(isSynced){
+            sendData("set_time", String.valueOf(timeOffset));
+        }
     }
 
     String getWiFiSSID(Context context){
@@ -251,13 +257,6 @@ public class MainActivity extends AppCompatActivity {
 
     /** 웹 서버로 데이터 전송 */
     public void sendData(final String parameter, String data) {
-        if(parameter.equals("sync_request")){
-            isSynced = true;
-        }
-        if(!isSynced){
-            return;
-        }
-
         final String param = parameter;
         final String d = data;
         lastParam = parameter;
@@ -289,8 +288,16 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         public void onResponse(Call call, Response response) throws IOException {
-            String body = response.body().string();
+            final String body = response.body().string();
             Log.d(TAG, "서버에서 응답한 Body:"+body);
+
+            Handler mHandler = new Handler(Looper.getMainLooper());
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), body, Toast.LENGTH_SHORT).show();
+                }
+            }, 0);
 
             if(lastParam.equals("sync_request")){
                 parseSyncRequest(body);
@@ -308,8 +315,16 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         public void onResponse(Call call, Response response) throws IOException {
-            String body = response.body().string();
+            final String body = response.body().string();
             Log.d(TAG, "서버에서 응답한 Body:"+body);
+
+            Handler mHandler = new Handler(Looper.getMainLooper());
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), body, Toast.LENGTH_SHORT).show();
+                }
+            }, 0);
         }
     };
 
@@ -327,12 +342,23 @@ public class MainActivity extends AppCompatActivity {
         firstFragment.setHourMode(hour12!=1);
         firstFragment.setHour(rawTime/100);
         firstFragment.setMinute(rawTime%100);
-
+/*
         setTime(rawTime/100, rawTime%100, firstFragment.getHourMode());
         setBrightness(brightness);
 
         secondFragment.setMode(brightMode);
         thirdFragment.setColonMode(showAMPM==1);
+*/
+        //isSynced = true;
+
+        Handler mHandler = new Handler(Looper.getMainLooper());
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                isSynced = true;
+            }
+        }, 2000);
+
     }
 
     private void timeRequest(String body){
@@ -344,14 +370,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startTimerTask(){
-        if(timerTask==null) {
+        /*if(timerTask==null) {
             timerTask = new TimerTask() {
                 @Override
                 public void run() {
                     sendData("time_request", "");
                 }
             };
-            timer.schedule(timerTask, 500, 500);
-        }
+            timer.schedule(timerTask, 2000, 2000);
+        }*/
+    }
+
+    public boolean checkSync(){
+        return isSynced;
     }
 }

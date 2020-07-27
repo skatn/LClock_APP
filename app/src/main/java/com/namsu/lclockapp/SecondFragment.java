@@ -78,7 +78,9 @@ public class SecondFragment extends Fragment {
     public void setMode(int mode){
         brightMode = mode;
         setSetting();
-        ((MainActivity)getActivity()).sendData("set_bright_mode", String.valueOf(mode));
+        if(((MainActivity)getActivity()).checkSync()){
+            ((MainActivity)getActivity()).sendData("set_bright_mode", String.valueOf(mode));
+        }
     }
 
     private void setSetting(){

@@ -36,8 +36,10 @@ public class ThirdFragment extends Fragment {
         colonSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) ((MainActivity)getActivity()).sendData("set_colon_mode", "1");
-                else ((MainActivity)getActivity()).sendData("set_colon_mode", "0");
+                if(((MainActivity)getActivity()).checkSync()){
+                    if(isChecked) ((MainActivity)getActivity()).sendData("set_colon_mode", "1");
+                    else ((MainActivity)getActivity()).sendData("set_colon_mode", "0");
+                }
             }
         });
 
