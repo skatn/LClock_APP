@@ -1,5 +1,6 @@
 package com.namsu.lclockapp;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ public class FirstFragment extends Fragment {
     private Switch switch1;
     private boolean isFirst = true;
     private View view;
+    private int timeOffset = 0, currTime = 0;
 
     // newInstance constructor for creating fragment with arguments
     public FirstFragment(){
@@ -78,8 +80,25 @@ public class FirstFragment extends Fragment {
         return view;
     }
 
-    public void setTime(int hour, int minute){
-        ((MainActivity)getActivity()).setTime(hour, minute, isHour24);
+    public void setTime(int hour, int minute, boolean sendOK){
+        int prevHour = currTime/100;
+        int prevMinute = currTime%100;
+
+        timeOffset += (hour-prevHour)*60*60;
+        timeOffset += (minute-prevMinute)*60;
+        currTime = hour*100+minute;
+
+        if(!isHour24){
+            if(hour>12)hour -= 12;
+            else if(hour==0)hour = 12;
+        }
+
+
+        ((MainActivity)getActivity()).setTime(hour, minute);
+
+        if(((MainActivity)getActivity()).checkSync() && sendOK){
+            ((MainActivity)getActivity()).sendData("set_time", String.valueOf(timeOffset));
+        }
     }
     public void setHour(int h){
         hour = h;
