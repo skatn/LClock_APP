@@ -1,36 +1,32 @@
 package com.namsu.lclockapp;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TimePicker;
 
 import androidx.fragment.app.Fragment;
 
-import com.namsu.lclockapp.R;
-
-public class FirstFragment extends Fragment {
+public class TimeFragment extends Fragment {
     private TimePicker timePicker;
-    private int hour, minutes;
-    private boolean isHour24 = true;
+    private static int hour, minutes;
+    private static boolean isHour24 = true;
     private Switch switch1;
     private boolean isFirst = true;
     private View view;
-    private int timeOffset = 0, currTime = 0;
+    private int timeOffset = 0;
 
     // newInstance constructor for creating fragment with arguments
-    public FirstFragment(){
+    public TimeFragment(){
 
     }
 
-    public static FirstFragment newInstance() {
-        FirstFragment fragment = new FirstFragment();
+    public static TimeFragment newInstance() {
+        TimeFragment fragment = new TimeFragment();
         return fragment;
     }
 
@@ -56,9 +52,7 @@ public class FirstFragment extends Fragment {
                     if(isChecked) isHour24 = true;
                     else isHour24 = false;
                     setTime(hour, minutes);
-                    if(((MainActivity)getActivity()).checkSync()){
-                        ((MainActivity)getActivity()).sendData("set_hour_mode", isHour24? "0":"1");
-                    }
+                    sendHourMode();
                 }
             });
 
@@ -66,42 +60,21 @@ public class FirstFragment extends Fragment {
             timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
                 @Override
                 public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-                    hour = hourOfDay;
-                    minutes = minute;
-                    setTime(hour, minutes);
+                    setTime(hourOfDay, minute);
+                    sendTimeOffset();
                 }
             });
 
             setHour(0);
             setMinute(0);
-            setCheck(isHour24);
+            updateHour();
+            updateMinute();
         }
 
         return view;
     }
 
-    public void setTime(int hour, int minute, boolean sendOK){
-        int prevHour = currTime/100;
-        int prevMinute = currTime%100;
-
-        timeOffset += (hour-prevHour)*60*60;
-        timeOffset += (minute-prevMinute)*60;
-        currTime = hour*100+minute;
-
-        if(!isHour24){
-            if(hour>12)hour -= 12;
-            else if(hour==0)hour = 12;
-        }
-
-
-        ((MainActivity)getActivity()).setTime(hour, minute);
-
-        if(((MainActivity)getActivity()).checkSync() && sendOK){
-            ((MainActivity)getActivity()).sendData("set_time", String.valueOf(timeOffset));
-        }
-    }
-    public void setHour(int h){
-        hour = h;
+    private void updateHour(){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             timePicker.setHour(hour);
         } else {
@@ -109,8 +82,7 @@ public class FirstFragment extends Fragment {
         }
     }
 
-    public void setMinute(int minute){
-        minutes = minute;
+    private void updateMinute(){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             timePicker.setMinute(minutes);
         } else {
@@ -118,38 +90,70 @@ public class FirstFragment extends Fragment {
         }
     }
 
-    public void setCheck(final boolean check){
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                switch1.setChecked(check);
+    public void update(){
+        try {
+            updateHour();
+            updateMinute();
+
+            int h = hour;
+            if (!isHour24) {
+                if (h > 12) h -= 12;
+                else if (h == 0) h = 12;
             }
-        });
+            ((MainActivity) getActivity()).setTime(h, minutes);
+
+            //update hour mode 12 or 24
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    switch1.setChecked(isHour24);
+                }
+            });
+        } catch (Exception e){
+            Log.d("qqqq", e.getMessage());
+        }
     }
 
-    public void setHourMode(boolean state){
+    private void sendHourMode(){
+        if(((MainActivity)getActivity()).checkSync()){
+            ((MainActivity)getActivity()).sendData("set_hour_mode", isHour24? "0":"1");
+        }
+    }
+
+    private void sendTimeOffset(){
+        if(((MainActivity)getActivity()).checkSync()){
+            ((MainActivity)getActivity()).sendData("set_time", String.valueOf(timeOffset));
+        }
+    }
+
+    private void setTime(int h, int m){
+        timeOffset += (h-hour)*60*60;
+        timeOffset += (m-minutes)*60;
+
+        if(!isHour24){
+            if(h>12)h -= 12;
+            else if(h==0)h = 12;
+        }
+
+        ((MainActivity)getActivity()).setTime(h, m);
+
+        hour = h;
+        minutes = m;
+    }
+
+    public void setTimeOffset(int offset){
+        timeOffset = offset;
+    }
+
+    public static void setHour(int h){
+        hour = h;
+    }
+
+    public static void setMinute(int minute){
+        minutes = minute;
+    }
+
+    public static void setHourMode(boolean state){
         isHour24 = state;
-        setCheck(isHour24);
-        setTime(hour, minutes);
-    }
-
-    public int getHour(){
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            return timePicker.getHour();
-        } else {
-            return timePicker.getCurrentHour();
-        }
-    }
-
-    public int getMinute(){
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            return timePicker.getMinute();
-        } else {
-            return timePicker.getCurrentMinute();
-        }
-    }
-
-    public boolean getHourMode(){
-        return isHour24;
     }
 }

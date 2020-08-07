@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiConfiguration;
@@ -18,10 +19,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
-
-import com.namsu.lclockapp.R;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -41,17 +41,18 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "qqqq";
     private OkHttpClient client;
     private String lastParam;
-    private FirstFragment firstFragment;
-    private SecondFragment secondFragment;
+    private TimeFragment timeFragment;
+    private BrightFragment brightFragment;
     private ThirdFragment thirdFragment;
     private Timer timer;
     private TimerTask timerTask;
     private boolean isSynced = false;
     SeekBar bright_bar;
     private int brightness = 50;
+    private ProgressDialog progressDialog;
 
     FragmentPagerAdapter adapterViewPager;
-    static ImageView firstSegment, secondSegment, colonSegment, thirdSegment, forthSegment;
+    ImageView firstSegment, secondSegment, colonSegment, thirdSegment, forthSegment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
         timer = new Timer();
 
-        firstFragment = FirstFragment.newInstance();
-        secondFragment = SecondFragment.newInstance();
+        timeFragment = TimeFragment.newInstance();
+        brightFragment = BrightFragment.newInstance();
         thirdFragment = ThirdFragment.newInstance();
 
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
@@ -84,6 +85,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendData("sync_request", "");
+                progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setMessage("동기화 중입니다.");
+                progressDialog.show();
                 startTimerTask();
 
                 /*if(checkWifi("L-Clock")){
@@ -159,11 +164,11 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    if(firstFragment==null) firstFragment = FirstFragment.newInstance();
-                    return firstFragment;
+                    if(timeFragment == null) timeFragment = TimeFragment.newInstance();
+                    return timeFragment;
                 case 1:
-                    if(secondFragment==null) secondFragment = SecondFragment.newInstance();
-                    return secondFragment;
+                    if(brightFragment ==null) brightFragment = BrightFragment.newInstance();
+                    return brightFragment;
                 case 2:
                     if(thirdFragment==null) thirdFragment = ThirdFragment.newInstance();
                     return thirdFragment;
@@ -265,19 +270,21 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onFailure(Call call, IOException e) {
             Log.d(TAG, "콜백오류:"+e.getMessage());
+
+            Handler mHandler = new Handler(Looper.getMainLooper());
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), "응답 없음", Toast.LENGTH_SHORT).show();
+                }
+            }, 0);
+            progressDialog.dismiss();
         }
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             final String body = response.body().string();
             Log.d(TAG, "서버에서 응답한 Body:"+body);
 
-            Handler mHandler = new Handler(Looper.getMainLooper());
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), body, Toast.LENGTH_SHORT).show();
-                }
-            }, 0);
 
             if(lastParam.equals("sync_request")){
                 parseSyncRequest(body);
@@ -292,62 +299,62 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onFailure(Call call, IOException e) {
             Log.d(TAG, "콜백오류:"+e.getMessage());
-        }
-        @Override
-        public void onResponse(Call call, Response response) throws IOException {
-            final String body = response.body().string();
-            Log.d(TAG, "서버에서 응답한 Body:"+body);
 
             Handler mHandler = new Handler(Looper.getMainLooper());
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplicationContext(), body, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "응답 없음", Toast.LENGTH_SHORT).show();
                 }
             }, 0);
+        }
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            final String body = response.body().string();
+            Log.d(TAG, "서버에서 응답한 Body:"+body);
         }
     };
 
     private void parseSyncRequest(String body){
         String[] datas = body.split(",");       //rawTime, timeOffset, hour12, useColon, brightMode, brightness
         int rawTime = Integer.parseInt(datas[0]);
-        timeOffset = Integer.parseInt(datas[1]);
+        int timeOffset = Integer.parseInt(datas[1]);
         int hour12 = Integer.parseInt(datas[2]);
         int showAMPM = Integer.parseInt(datas[3]);
         int brightMode = Integer.parseInt(datas[4]);
-        int brightness = Integer.parseInt(datas[5]);
+        final int brightness = Integer.parseInt(datas[5]);
 
-        currTime = rawTime;
+        TimeFragment.setHourMode(hour12!=1);
+        TimeFragment.setHour(rawTime/100);
+        TimeFragment.setMinute(rawTime%100);
+        timeFragment.setTimeOffset(timeOffset);
 
-        firstFragment.setHourMode(hour12!=1);
-        firstFragment.setHour(rawTime/100);
-        firstFragment.setMinute(rawTime%100);
-/*
-        setTime(rawTime/100, rawTime%100, firstFragment.getHourMode());
-        setBrightness(brightness);
-
-        secondFragment.setMode(brightMode);
+        BrightFragment.setMode(brightMode);
         thirdFragment.setColonMode(showAMPM==1);
-*/
-        //isSynced = true;
+
+        isSynced = true;
 
         Handler mHandler = new Handler(Looper.getMainLooper());
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                isSynced = true;
+                progressDialog.dismiss();
+
+                setBrightness(brightness);
+
+                timeFragment.update();
+                brightFragment.update();
+                thirdFragment.update();
             }
         }, 2000);
-
     }
 
     private void timeRequest(String body){
         int rawTime = Integer.parseInt(body);
-        setTime(rawTime/100, rawTime%100, firstFragment.getHourMode());
 
-        firstFragment.setTime(rawTime/100, rawTime%100, false);
-        firstFragment.setHour(rawTime/100);
-        firstFragment.setMinute(rawTime%100);
+        timeFragment.setHour(rawTime/100);
+        timeFragment.setMinute(rawTime%100);
+        timeFragment.update();
     }
 
     private void startTimerTask(){
@@ -364,9 +371,5 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean checkSync(){
         return isSynced;
-    }
-
-    public int getCurrTime(){
-        return currTime;
     }
 }

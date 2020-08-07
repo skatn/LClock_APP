@@ -1,6 +1,7 @@
 package com.namsu.lclockapp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,7 @@ import android.widget.Switch;
 import androidx.fragment.app.Fragment;
 
 public class ThirdFragment extends Fragment {
-    private boolean showAMPM = false;
+    private static boolean showAMPM = false;
     Switch colonSwitch;
 
     // newInstance constructor for creating fragment with arguments
@@ -46,13 +47,20 @@ public class ThirdFragment extends Fragment {
         return view;
     }
 
-    public void setColonMode(boolean state){
+    public void update(){
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    colonSwitch.setChecked(showAMPM);
+                }
+            });
+        } catch (Exception e){
+            Log.d("qqqq", e.getMessage());
+        }
+    }
+
+    public static void setColonMode(boolean state){
         showAMPM = state;
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                colonSwitch.setChecked(showAMPM);
-            }
-        });
     }
 }
